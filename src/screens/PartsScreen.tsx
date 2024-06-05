@@ -1,18 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-
-const parts = [
-  { id: '1', name: 'Carburador', description: 'Carburador para motores de 4 cilindros', price: '$100' },
-  { id: '2', name: 'Amortiguador', description: 'Amortiguador delantero', price: '$75' },
-  { id: '3', name: 'Batería', description: 'Batería de 12V', price: '$120' },
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
 
 const PartsScreen = ({ navigation }) => {
+  const [parts, setParts] = useState([]);
+
+  useEffect(() => {
+    const loadParts = async () => {
+      try {
+        const partsData = await AsyncStorage.getItem('parts');
+        if (partsData !== null) {
+          setParts(JSON.parse(partsData));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadParts();
+  }, []);
+
+  const addPart = (part) => {
+    const newParts = [...parts, part];
+    setParts(newParts);
+    AsyncStorage.setItem('parts', JSON.stringify(newParts));
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
         data={parts}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
           <View style={styles.partItem}>
             <Text style={styles.name}>{item.name}</Text>
@@ -21,7 +40,7 @@ const PartsScreen = ({ navigation }) => {
           </View>
         )}
       />
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddPart')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddPart', { addPart })}>
         <Text style={styles.buttonText}>Agregar Parte</Text>
       </TouchableOpacity>
     </View>
@@ -32,35 +51,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffff',
   },
   partItem: {
-    padding: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    marginBottom: 10,
+    // backgroundColor: '#5589FA',
+    borderRadius: 8,
+    marginBottom: 12,
+    borderColor: '#50b070',
+    borderWidth: 1,
+    backgroundColor: '#ffffff',
   },
   name: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    // color: '#fff',
+    color: '#000'
   },
   details: {
     fontSize: 16,
-    color: '#666',
+    // color: '#fff',
+    color: '#444',
   },
   button: {
-    backgroundColor: '#6200EE',
-    padding: 10,
-    borderRadius: 4,
+    backgroundColor: '#50b070',
+    padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
     marginTop: 10,
+    shadowRadius: 12,
+    shadowColor: '#000000',
+    shadowOffset: {width: 4, height: 4},
+    shadowOpacity: 1,
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 18,
   },
 });
 

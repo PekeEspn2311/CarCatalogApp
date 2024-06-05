@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import uuid from 'react-native-uuid';
 
-const AddWorkshopScreen = ({ navigation }) => {
+const AddWorkshopScreen = ({ navigation, route }) => {
+  const { addWorkshop } = route.params;
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
 
   const handleAddWorkshop = () => {
-    console.log('Workshop added:', { name, location });
+    const newWorkshop = { _id: uuid.v4(), name, location };
+    addWorkshop(newWorkshop);
     navigation.goBack();
   };
 
@@ -39,32 +42,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffff',
   },
   title: {
-    fontSize: 24,
-    marginBottom: 16,
+    fontSize: 28,
+    marginBottom: 32,
     textAlign: 'center',
     color: '#333',
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
+    height: 50,
+    borderColor: '#50b070',
     borderWidth: 1,
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    borderRadius: 4,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 8,
     backgroundColor: '#fff',
+    fontSize: 16,
   },
   button: {
-    backgroundColor: '#6200EE',
-    padding: 10,
-    borderRadius: 4,
+    backgroundColor: '#50b070',
+    padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
+    marginTop: 10,
+    shadowRadius: 12,
+    shadowColor: '#000000',
+    shadowOffset: {width: 4, height: 4},
+    shadowOpacity: 1,
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 18,
   },
 });
 
